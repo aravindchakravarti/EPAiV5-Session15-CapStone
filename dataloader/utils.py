@@ -5,6 +5,8 @@ import gzip
 import shutil
 import os
 import gdown
+import struct
+import numpy as np
 
 def timer(func):
     def wrapper(*args, **kwargs):
@@ -25,4 +27,20 @@ def download_file(url, dest_path):
         # Uncomment if you want to delete the zip file
         # os.remove(dest_path)
 
-        print(f'Data extracted successfully for file {dest_path[:-3]}') 
+        print(f'Data extracted successfully for file {dest_path[:-3]}')
+
+def read_idx(filename):
+    with open(filename, 'rb') as f:
+        # Read the magic number and dimensions
+        magic, size = struct.unpack(">II", f.read(8))  # ">II" reads two big-endian integers
+        if magic == 2051:  # Magic number for image files
+            rows, cols = struct.unpack(">II", f.read(8))
+            # Read the data and reshape it into (size, rows, cols)
+            data = np.fromfile(f, dtype=np.uint8).reshape(size, rows, cols)
+        elif magic == 2049:  # Magic number for label files
+            # Read the labels directly as a 1D array
+            data = np.fromfile(f, dtype=np.uint8)
+        else:
+            raise ValueError("Invalid IDX file: unexpected magic number.")
+    
+    return data

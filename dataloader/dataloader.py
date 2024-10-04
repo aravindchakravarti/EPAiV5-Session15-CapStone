@@ -7,6 +7,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 from .preprocessors import default_preprocess
 from .utils import download_file, timer
+from .utils import read_idx
 
 DataSample = namedtuple('DataSample', ['features', 'label'])
 
@@ -45,6 +46,20 @@ class DataLoader:
     
     def read_data(self):
         # Implement data reading logic
+        dataset_to_read = {
+            'train_images' : f'datasets/{self.dataset_name}/train_images/file',
+            'train_labels' : f'datasets/{self.dataset_name}/train_labels/file',
+            'test_images' : f'datasets/{self.dataset_name}/test_images/file',
+            'test_labels' : f'datasets/{self.dataset_name}/test_labels/file'
+        }
+
+        for type, path in dataset_to_read.items():
+            if os.path.exists(path):
+                data = read_idx(path)
+                print(f'type = {data.shape}')
+            else:
+                raise ValueError(f"In {self.dataset_name} {type} doesn't exists")
+        
         return []
     
     def preprocess_data(self, data):
