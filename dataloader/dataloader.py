@@ -31,7 +31,17 @@ class DataLoader:
     def download_dataset(self):
         # Implement dataset download logic
         print(f"Downloading {self.dataset_name} dataset...")
-        # Use download_file from utils.py
+        urls = {
+            'train_images': 'https://drive.google.com/uc?export=download&id=1ruFYL2hHgetFc6hLFE87aSS9GQQAgav9',
+            'train_labels': 'https://drive.google.com/uc?export=download&id=1ILIdcDlpcs55lkQ1ycot58S4TQPu2_sx',
+            'test_images': 'https://drive.google.com/uc?export=download&id=1AOW0gGEgQHU4EXrAG5o9m-UquA4R5aHP',
+            'test_labels': 'https://drive.google.com/uc?export=download&id=12nE2NfMEz0SOVA0Pb_aIsGPvy6z9brw4'
+        }
+
+        for folder_name, url in urls.items():
+            os.makedirs(f'datasets/{self.dataset_name}/{folder_name}')
+            dest_path = f'datasets/{self.dataset_name}/{folder_name}/file.gz'
+            download_file(url, dest_path)
     
     def read_data(self):
         # Implement data reading logic

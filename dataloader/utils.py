@@ -1,6 +1,10 @@
 # dataloader/utils.py
-
+import requests
 import time
+import gzip
+import shutil
+import os
+import gdown
 
 def timer(func):
     def wrapper(*args, **kwargs):
@@ -11,5 +15,14 @@ def timer(func):
     return wrapper
 
 def download_file(url, dest_path):
-    # Implement file download logic
-    pass
+    # Download the file 
+    gdown.download(url, dest_path, quiet=False)
+
+    if dest_path.endswith('.gz'):
+        with gzip.open(dest_path, 'rb') as f_in:
+            with open(dest_path[:-3], 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        # Uncomment if you want to delete the zip file
+        # os.remove(dest_path)
+
+        print(f'Data extracted successfully for file {dest_path[:-3]}') 
