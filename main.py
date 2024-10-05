@@ -11,10 +11,10 @@ def main():
     # Initialize DataLoader
     data_loader = DataLoader(dataset_name=dataset_name, batch_size=batch_size)
 
-    # Iterate over data
-    for batch in data_loader:
-        # Process the batch
-        print(f"Processing batch of size {len(batch)}")
+    # # Iterate over data
+    # for batch in data_loader:
+    #     # Process the batch
+    #     print(f"Processing batch of size {len(batch)}")
 
 if __name__ == '__main__':
     main()

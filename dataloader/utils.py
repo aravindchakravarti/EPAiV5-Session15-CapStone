@@ -7,6 +7,9 @@ import os
 import gdown
 import struct
 import numpy as np
+import tarfile
+from pathlib import Path
+import pickle
 
 def timer(func):
     def wrapper(*args, **kwargs):
@@ -19,7 +22,7 @@ def timer(func):
 def download_file(url, dest_path):
     # Download the file 
     gdown.download(url, dest_path, quiet=False)
-
+    print(f'Destination path = {dest_path}')
     if dest_path.endswith('.gz'):
         with gzip.open(dest_path, 'rb') as f_in:
             with open(dest_path[:-3], 'wb') as f_out:
@@ -28,6 +31,18 @@ def download_file(url, dest_path):
         # os.remove(dest_path)
 
         print(f'Data extracted successfully for file {dest_path[:-3]}')
+    
+    elif dest_path.endswith('.tar'):
+        print('Entered to Extract TAR file ***********')
+        # Check if the file is a tar file
+        if tarfile.is_tarfile(dest_path):
+            with tarfile.open(dest_path) as tar:
+                to_extact = Path(dest_path).parents[0]
+                # Extract all contents to the specified directory
+                tar.extractall(path=to_extact)
+                print(f"Extracted to {to_extact}")
+        else:
+            print("The file is not a valid tar file.")
 
 def read_idx(filename):
     with open(filename, 'rb') as f:
@@ -44,3 +59,8 @@ def read_idx(filename):
             raise ValueError("Invalid IDX file: unexpected magic number.")
     
     return data
+
+def unpickle(file):
+    with open(file, 'rb') as fo:
+        dict = pickle.load(fo, encoding='bytes')  # CIFAR-10 is encoded as bytes
+    return dict

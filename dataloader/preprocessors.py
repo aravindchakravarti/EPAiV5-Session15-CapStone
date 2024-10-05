@@ -2,11 +2,12 @@
 
 def default_preprocess(sample):
     # Implement default preprocessing
+    sample = sample * 2
     return sample
 
 def normalize(sample):
-    # Implement normalization logic
-    return sample
+    # Get the min and max values to normalize the list
+    return (sample/255)
 
 def augment(sample):
     # Implement data augmentation logic

@@ -27,40 +27,62 @@ class DataLoader:
             self.download_dataset()
         # Implement data loading logic
         self.data = self.preprocess_data(self.read_data())
+
+        # print(f"Data after pre-processing = {(self.data[0])}")
     
     @timer
     def download_dataset(self):
         # Implement dataset download logic
         print(f"Downloading {self.dataset_name} dataset...")
-        urls = {
-            'train_images': 'https://drive.google.com/uc?export=download&id=1ruFYL2hHgetFc6hLFE87aSS9GQQAgav9',
-            'train_labels': 'https://drive.google.com/uc?export=download&id=1ILIdcDlpcs55lkQ1ycot58S4TQPu2_sx',
-            'test_images': 'https://drive.google.com/uc?export=download&id=1AOW0gGEgQHU4EXrAG5o9m-UquA4R5aHP',
-            'test_labels': 'https://drive.google.com/uc?export=download&id=12nE2NfMEz0SOVA0Pb_aIsGPvy6z9brw4'
-        }
+        if self.dataset_name == 'MNIST':
+            urls = {
+                'train_images': 'https://drive.google.com/uc?export=download&id=1ruFYL2hHgetFc6hLFE87aSS9GQQAgav9',
+                'train_labels': 'https://drive.google.com/uc?export=download&id=1ILIdcDlpcs55lkQ1ycot58S4TQPu2_sx',
+                'test_images': 'https://drive.google.com/uc?export=download&id=1AOW0gGEgQHU4EXrAG5o9m-UquA4R5aHP',
+                'test_labels': 'https://drive.google.com/uc?export=download&id=12nE2NfMEz0SOVA0Pb_aIsGPvy6z9brw4'
+            }
 
-        for folder_name, url in urls.items():
-            os.makedirs(f'datasets/{self.dataset_name}/{folder_name}')
-            dest_path = f'datasets/{self.dataset_name}/{folder_name}/file.gz'
-            download_file(url, dest_path)
+            for folder_name, url in urls.items():
+                os.makedirs(f'datasets/{self.dataset_name}/{folder_name}')
+                dest_path = f'datasets/{self.dataset_name}/{folder_name}/file.gz'
+                download_file(url, dest_path)
+
+        elif self.dataset_name == 'CIFAR-10':
+            os.makedirs(f'datasets/{self.dataset_name}')
+            urls = {
+                'data' : 'https://drive.google.com/uc?export=download&id=1Nh71Y_31pP2qu4KuNMqBavBg7h-WDMNm'
+            }
+            dest_path = f'datasets/{self.dataset_name}/file.tar'
+            download_file(urls['data'], dest_path)
+
     
     def read_data(self):
         # Implement data reading logic
-        dataset_to_read = {
-            'train_images' : f'datasets/{self.dataset_name}/train_images/file',
-            'train_labels' : f'datasets/{self.dataset_name}/train_labels/file',
-            'test_images' : f'datasets/{self.dataset_name}/test_images/file',
-            'test_labels' : f'datasets/{self.dataset_name}/test_labels/file'
-        }
+        if self.dataset_name == 'MNIST': 
+            dataset_to_read = {
+                'train_images' : f'datasets/{self.dataset_name}/train_images/file',
+                'train_labels' : f'datasets/{self.dataset_name}/train_labels/file',
+                'test_images' : f'datasets/{self.dataset_name}/test_images/file',
+                'test_labels' : f'datasets/{self.dataset_name}/test_labels/file'
+            }
 
-        for type, path in dataset_to_read.items():
-            if os.path.exists(path):
-                data = read_idx(path)
-                # print(f'type = {data.shape}')
-            else:
-                raise ValueError(f"In {self.dataset_name} {type} doesn't exists")
-        
-        return []
+            for type, path in dataset_to_read.items():
+                if os.path.exists(path):
+                    # TO-DO : We should do it for every image
+                    if type == 'train_images':
+                        train_data = read_idx(path)
+                        # print(f'type = {train_data.shape}')
+                    elif type == 'train_labels':
+                        train_labels = read_idx(path)
+                        # print(f'type = {train_labels.shape}')
+                else:
+                    raise ValueError(f"In {self.dataset_name} {type} doesn't exists")
+            
+            # print(f'Data before preprocessing = {train_data[0]}')
+            # print("\n*********************************************\n")
+            return train_data
+        elif self.dataset_name == 'CIFAR-10':
+            print('Work in progress ...') 
     
     def preprocess_data(self, data):
         # Implement data preprocessing logic
