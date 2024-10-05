@@ -7,7 +7,9 @@ from collections import namedtuple
 from contextlib import contextmanager
 from .preprocessors import default_preprocess
 from .utils import download_file, timer
-from .utils import read_idx
+from .utils import read_idx, unpickle
+import numpy as np
+import matplotlib.pyplot as plt
 
 DataSample = namedtuple('DataSample', ['features', 'label'])
 
@@ -81,8 +83,34 @@ class DataLoader:
             # print(f'Data before preprocessing = {train_data[0]}')
             # print("\n*********************************************\n")
             return train_data
+        
         elif self.dataset_name == 'CIFAR-10':
-            print('Work in progress ...') 
+            cifar_path = f'datasets/{self.dataset_name}/cifar-10-batches-py'
+            all_files = os.listdir(cifar_path)
+            train_img_files = [f for f in all_files if f.startswith('data_batch_')]
+            train_data = []
+ 
+            for img_batch in train_img_files:
+                data_dict = unpickle(os.path.join(cifar_path,img_batch))
+                img_data = data_dict[b'data']
+                img_label = data_dict[b'labels']
+
+                img_data = img_data.reshape(-1, 3, 32, 32)  # Reshape to (batch_size, 3, 32, 32)
+                img_data = np.transpose(img_data, (0, 2, 3, 1))  # Transpose to (batch_size, 32, 32, 3)
+
+                ''' 
+                To confirm whther images are read properly or not, 
+                uncomment below lines, which will display first image in each batch
+                '''
+                # plt.imshow(img_data[0])
+                # plt.show()
+                # print(f'image data = {img_data.shape}, label = {len(img_label)}')
+                
+                train_data.append(img_data.tolist())
+            
+            print(f'Length of CIFAR-10 data = {len(train_data[0])}')
+            
+            return train_data
     
     def preprocess_data(self, data):
         # Implement data preprocessing logic
