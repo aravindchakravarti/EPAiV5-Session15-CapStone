@@ -56,7 +56,7 @@ class DataLoader:
         for type, path in dataset_to_read.items():
             if os.path.exists(path):
                 data = read_idx(path)
-                print(f'type = {data.shape}')
+                # print(f'type = {data.shape}')
             else:
                 raise ValueError(f"In {self.dataset_name} {type} doesn't exists")
         

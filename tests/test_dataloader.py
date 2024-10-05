@@ -19,14 +19,14 @@ class TestDataLoader(unittest.TestCase):
         self.assertEqual(data_loader.dataset_name, 'MNIST')
         self.assertTrue(os.path.exists('datasets/MNIST'))
 
-    # def test_flexible_method_parameters(self):
-    #     """Test Case 2: Flexible Method Parameters"""
-    #     def custom_preprocess(sample, factor=2):
-    #         # Example of using positional and keyword arguments
-    #         return sample * factor
+    def test_flexible_method_parameters(self):
+        """Test Case 2: Flexible Method Parameters"""
+        def custom_preprocess(sample, factor=2):
+            # Example of using positional and keyword arguments
+            return sample * factor
 
-    #     data_loader = DataLoader(preprocess_func=custom_preprocess)
-    #     self.assertTrue(callable(data_loader.kwargs['preprocess_func']))
+        data_loader = DataLoader(preprocess_func=custom_preprocess)
+        self.assertTrue(callable(data_loader.kwargs['preprocess_func']))
 
     # def test_data_normalization(self):
     #     """Test Case 3: Data Normalization"""
